@@ -10,8 +10,8 @@ if [ "$(oc auth can-i '*' '*' --all-namespaces)" != "yes" ]; then
   echo "Log into the cluster with a user with the required privileges (e.g. kubeadmin) and retry."
   exit 1
 fi
-
 echo
+
 echo "Installing the OpenShift GitOps operator subscription:"
 kubectl apply -f $ROOT/openshift-gitops/subscription-openshift-gitops.yaml
 
@@ -123,6 +123,23 @@ case $MODE in
         $ROOT/hack/preview.sh ;;
 esac
 
+echo
+# REKOR_HOSTNAME=$(kubectl get ingresses.config.openshift.io cluster --template={{.spec.domain}})
+# echo "Patching hostname for rekor to: $REKOR_HOSTNAME "
+# kubectl patch applications.argoproj.io/rekor -n openshift-gitops -p "
+#       spec:
+#         source:
+#           helm:
+#             valueFiles:
+#               - values.yaml
+#             values: |-
+#               server:
+#                 ingress:
+#                   hostname: https://rekor.$REKOR_HOSTNAME
+#                   annotations:
+#                     route.openshift.io/termination: \"edge\"
+# " --type=merge
+###
 ARGO_CD_ROUTE=$(kubectl get \
                  -n openshift-gitops \
                  -o template \

@@ -6,7 +6,9 @@
 # cluster. 
 
 # Make sure we have our template file
-if [[ ! -f $PWD/deploy-local-rekor.tpl ]];then
+SCRIPT_DIR="$( cd -- "$(dirname "$0")" >/dev/null 2>&1 ; pwd -P )"
+
+if [[ ! -f $SCRIPT_DIR/deploy-local-rekor.tpl ]];then
   echo "Template file 'deploy-local-rekor.tpl' not found in this directory "; exit 1 
 fi
 
@@ -32,7 +34,7 @@ if [[ $1 == "--verbose" ]]; then
 fi
 
 # Set the template input file
-input_file="$PWD/deploy-local-rekor.tpl"
+input_file="$SCRIPT_DIR/deploy-local-rekor.tpl"
 
 output=$( sed -e "s/\${domain}/$domain/" $input_file )
 
@@ -90,3 +92,5 @@ while ! curl --fail --insecure --output /dev/null --silent "https://rekor-server
 done
 
 echo "Done"
+
+echo "Rekor server availble at: https://rekor-server.$domain"
